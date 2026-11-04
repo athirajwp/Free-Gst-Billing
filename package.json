@@ -84,7 +84,7 @@
     "dev": "node scripts/bundle-tesseract-assets.mjs && node server.js & vite",
     "dev:win": "node scripts/bundle-tesseract-assets.mjs && (start /b node server.js) && vite",
     "build": "vite build",
-    "start": "vite build && node server.js",
+    "start": "node server.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "icons": "node scripts/generate-icons.mjs",

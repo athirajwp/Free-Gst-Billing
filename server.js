@@ -26,12 +26,15 @@ const DATA_DIR = path.join(__dirname, 'data');
 // by any common software we could find. The persisted `data/port.txt` always
 // wins over this default — so a single user who genuinely needs 47371 for
 // something else can edit that file and we'll respect it forever.
-const DEFAULT_PORT = 47371;
+// When hosted on cloud platforms (Render, Railway, Fly.io, Heroku), process.env.PORT is respected.
 const PORT_FILE = path.join(__dirname, 'data', 'port.txt');
+const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : null;
+const DEFAULT_PORT = envPort || 47371;
 
 // Read the persisted port (if any) — written once on first successful start
 // and every time we get bumped off our preferred port by EADDRINUSE.
 const persistedPort = (() => {
+  if (envPort) return envPort;
   try {
     if (!fs.existsSync(PORT_FILE)) return null;
     const n = parseInt(fs.readFileSync(PORT_FILE, 'utf-8').trim(), 10);
@@ -39,7 +42,8 @@ const persistedPort = (() => {
   } catch { return null; }
 })();
 const STARTING_PORT = persistedPort || DEFAULT_PORT;
-const MAX_PORT_SCAN = 50; // 47371 → 47420 is enough headroom for any conceivable collision
+const MAX_PORT_SCAN = envPort ? 0 : 50; // 47371 → 47420 is enough headroom for any conceivable collision
+const HOST = envPort || process.env.HOST ? (process.env.HOST || '0.0.0.0') : '127.0.0.1';
 
 const app = express();
 
@@ -54,11 +58,19 @@ const app = express();
 // also localhost.
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const allow =
+  const isLocal =
     !origin ||
     /^https?:\/\/localhost(:\d+)?$/i.test(origin) ||
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin) ||
     /^https?:\/\/\[::1\](:\d+)?$/i.test(origin);
+  const host = req.headers.host;
+  const isSameHost = origin && host && origin.replace(/^https?:\/\//, '').split(':')[0] === host.split(':')[0];
+  const isCloudOrigin = origin && (
+    /^https?:\/\/.*\.onrender\.com$/i.test(origin) ||
+    /^https?:\/\/.*\.up\.railway\.app$/i.test(origin) ||
+    /^https?:\/\/.*\.fly\.dev$/i.test(origin)
+  );
+  const allow = isLocal || isSameHost || isCloudOrigin;
   if (!allow) {
     return res.status(403).json({ error: 'Cross-origin request refused' });
   }
@@ -1823,21 +1835,26 @@ process.on('unhandledRejection', (err) => logFatal(err, 'unhandledRejection'));
 // every byte stays on the user's machine, which the privacy promise depends on.
 let activeServer = null;
 function startServer(port) {
-  const server = app.listen(port, '127.0.0.1', () => {
+  const server = app.listen(port, HOST, () => {
     activeServer = server;
     // Persist the chosen port — the .bat launcher reads this for the browser URL.
     // Writing on EVERY successful boot means: if our preferred 47371 was busy and
     // we landed on 47372 instead, next launch tries 47372 first (cuts collision
     // scans in half on repeated reboots of whatever was holding 47371).
     try { fs.writeFileSync(PORT_FILE, String(port), 'utf-8'); } catch { /* ignore */ }
-    console.log(`\n  Free GST Billing Software running at http://localhost:${port}`);
+    console.log(`\n  Free GST Billing Software running at http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${port}`);
     console.log(`  Data stored in: ${DATA_DIR}\n`);
   });
   server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE' && port < STARTING_PORT + MAX_PORT_SCAN) {
+    if (err.code === 'EADDRINUSE' && MAX_PORT_SCAN > 0 && port < STARTING_PORT + MAX_PORT_SCAN) {
       console.log(`  Port ${port} is busy, trying ${port + 1}...`);
       startServer(port + 1);
     } else if (err.code === 'EADDRINUSE') {
+      if (envPort) {
+        console.error(`  Port ${port} specified by environment is already in use.`);
+        logFatal(err, 'startup');
+        process.exit(1);
+      }
       // We've exhausted the scan range. Tell the OS to pick anything free — at
       // this point the user has 50+ apps fighting for the 47371-47421 range,
       // which we treat as "do whatever works" rather than failing to start.
