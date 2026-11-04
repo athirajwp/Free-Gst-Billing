@@ -996,7 +996,7 @@ function App() {
           <button className="pwa-dismiss-btn" onClick={dismissInstallBanner} title="Remind me later (re-shows in 14 days)"><X size={16} /></button>
         </div>
       )}
-      <div className="main-content">
+      <div className={`main-content ${currentView === 'pos' ? 'main-content-pos' : ''}`}>
         {currentView !== 'new' && currentView !== 'pos' && <StarBanner />}
         {currentView === 'dashboard' && (
           <Dashboard onNew={handleNewInvoice} onPos={() => setCurrentView('pos')} onEdit={handleEditInvoice} onPrint={handlePrintInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} onOpenProducts={() => setCurrentView('inventory')} onOpenSettings={() => setCurrentView('settings')} onOpenGuide={openDocs} onOpenSupport={() => setCurrentView('support')} activeProfile={profile} />

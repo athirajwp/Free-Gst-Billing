@@ -560,19 +560,19 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
   };
 
   return (
-    <div className="pos-app-wrapper" style={{ minHeight: '100vh', background: 'var(--bg-primary, #f0f2f5)', display: 'flex', flexDirection: 'column' }}>
+    <div className="pos-app-wrapper" style={{ height: '100vh', maxHeight: '100vh', background: 'var(--bg-primary, #f0f2f5)', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxSizing: 'border-box' }}>
 
       {/* TOP HEADER / ACTION BAR */}
       <header style={{
+        height: '48px',
+        flexShrink: 0,
         background: 'var(--card-bg, #ffffff)',
         borderBottom: '1px solid var(--border, #e2e8f0)',
-        padding: '0.6rem 1.25rem',
+        padding: '0 1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
+        boxSizing: 'border-box',
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
@@ -710,24 +710,27 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
       {/* MAIN TWO-COLUMN POS WORKSPACE */}
       <div style={{
         flex: 1,
+        minHeight: 0,
+        height: 'calc(100vh - 48px)',
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1.35fr) minmax(380px, 1fr)',
-        gap: '1rem',
-        padding: '1rem',
-        maxWidth: '1700px',
+        gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 1fr)',
+        gap: '0.65rem',
+        padding: '0.65rem',
         width: '100%',
-        margin: '0 auto',
-        boxSizing: 'border-box'
+        margin: '0',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}>
 
         {/* LEFT COLUMN: SCANNER & PRODUCT CATALOG */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', minHeight: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0, height: '100%', overflow: 'hidden' }}>
 
           {/* BARCODE SCANNER & ITEM SEARCH BOX */}
           <div style={{
+            flexShrink: 0,
             background: 'var(--card-bg, #ffffff)',
-            borderRadius: '10px',
-            padding: '0.75rem 1rem',
+            borderRadius: '8px',
+            padding: '0.5rem 0.75rem',
             border: '1px solid var(--border, #e2e8f0)',
             boxShadow: '0 1px 4px rgba(0,0,0,0.03)'
           }}>
@@ -808,15 +811,15 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
           {/* PRODUCT TILES GRID */}
           <div style={{
             flex: 1,
+            minHeight: 0,
             background: 'var(--card-bg, #ffffff)',
-            borderRadius: '10px',
-            padding: '0.85rem',
+            borderRadius: '8px',
+            padding: '0.65rem',
             border: '1px solid var(--border, #e2e8f0)',
             overflowY: 'auto',
-            maxHeight: 'calc(100vh - 195px)',
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap: '0.75rem',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: '0.6rem',
             alignContent: 'start'
           }}>
             {filteredProducts.length === 0 ? (
@@ -916,19 +919,21 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
 
         {/* RIGHT COLUMN: POS CART & BILLING CHECKOUT */}
         <div style={{
+          height: '100%',
+          minHeight: 0,
           background: 'var(--card-bg, #ffffff)',
-          borderRadius: '10px',
+          borderRadius: '8px',
           border: '1px solid var(--border, #e2e8f0)',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-          overflow: 'hidden',
-          maxHeight: 'calc(100vh - 95px)'
+          overflow: 'hidden'
         }}>
 
           {/* CART HEADER */}
           <div style={{
-            padding: '0.75rem 1rem',
+            flexShrink: 0,
+            padding: '0.45rem 0.75rem',
             background: 'var(--bg-secondary)',
             borderBottom: '1px solid var(--border)',
             display: 'flex',
@@ -936,12 +941,12 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
             alignItems: 'center'
           }}>
             <div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Invoice No.</div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text)' }}>{invoiceNumber || 'INV-...'}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Invoice No.</div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text)' }}>{invoiceNumber || 'INV-...'}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Total Items</div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--primary)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Items</div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--primary)' }}>
                 {cart.length} ({cart.reduce((s, i) => s + (Number(i.quantity) || 0), 0)} pcs)
               </div>
             </div>
@@ -950,15 +955,15 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
           {/* CART ITEMS LIST / TABLE */}
           <div style={{
             flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
-            padding: '0.5rem',
-            minHeight: '220px'
+            padding: '0.35rem 0.5rem'
           }}>
             {cart.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-                <ShoppingCart size={44} style={{ margin: '0 auto 0.5rem', opacity: 0.3 }} />
-                <p style={{ fontWeight: 600, fontSize: '0.95rem', margin: 0 }}>Bill cart is empty</p>
-                <p style={{ fontSize: '0.8rem', margin: '0.35rem 0 0' }}>Scan barcode or click items on the left to add</p>
+              <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)' }}>
+                <ShoppingCart size={38} style={{ margin: '0 auto 0.4rem', opacity: 0.3 }} />
+                <p style={{ fontWeight: 600, fontSize: '0.9rem', margin: 0 }}>Bill cart is empty</p>
+                <p style={{ fontSize: '0.78rem', margin: '0.25rem 0 0' }}>Scan barcode or click items on the left to add</p>
               </div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
@@ -1049,25 +1054,26 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
 
           {/* TOTALS & BREAKDOWN SECTION */}
           <div style={{
+            flexShrink: 0,
             background: 'var(--bg-secondary)',
             borderTop: '1px solid var(--border)',
-            padding: '0.75rem 1rem',
-            fontSize: '0.84rem'
+            padding: '0.45rem 0.75rem',
+            fontSize: '0.8rem'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem', color: 'var(--text-secondary)' }}>
               <span>Taxable Subtotal:</span>
               <span>{formatCurrency(totals.taxableAmount || totals.subtotal || 0, 'INR')}</span>
             </div>
 
             {invoiceType === 'tax-invoice' && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem', color: 'var(--text-secondary)' }}>
                 <span>GST ({totals.isInterstate ? 'IGST' : 'CGST + SGST'}):</span>
                 <span>{formatCurrency((totals.cgst || 0) + (totals.sgst || 0) + (totals.igst || 0) + (totals.utgst || 0), 'INR')}</span>
               </div>
             )}
 
             {/* Bill Discount Row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Discount (₹):</span>
               <input
                 type="number"
@@ -1076,18 +1082,18 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                 placeholder="0"
                 onChange={e => setBillDiscount({ type: 'fixed', value: Math.max(0, parseFloat(e.target.value) || 0) })}
                 style={{
-                  width: '75px',
+                  width: '70px',
                   textAlign: 'right',
-                  padding: '0.15rem 0.35rem',
+                  padding: '0.1rem 0.3rem',
                   borderRadius: '4px',
                   border: '1px solid var(--border)',
-                  fontSize: '0.8rem'
+                  fontSize: '0.78rem'
                 }}
               />
             </div>
 
             {totals.roundOff !== 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 <span>Round off:</span>
                 <span>{totals.roundOff > 0 ? `+₹${totals.roundOff}` : `-₹${Math.abs(totals.roundOff)}`}</span>
               </div>
@@ -1098,11 +1104,11 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'baseline',
-              paddingTop: '0.5rem',
-              marginTop: '0.35rem',
+              paddingTop: '0.35rem',
+              marginTop: '0.25rem',
               borderTop: '1.5px dashed var(--border)',
               fontWeight: 800,
-              fontSize: '1.25rem',
+              fontSize: '1.15rem',
               color: 'var(--primary)'
             }}>
               <span>Grand Total:</span>
@@ -1111,8 +1117,8 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
           </div>
 
           {/* PAYMENT MODE & TENDER SELECTOR (Vyapar Signature) */}
-          <div style={{ padding: '0.75rem 1rem', borderTop: '1px solid var(--border)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.35rem', marginBottom: '0.65rem' }}>
+          <div style={{ flexShrink: 0, padding: '0.45rem 0.75rem', borderTop: '1px solid var(--border)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.25rem', marginBottom: '0.35rem' }}>
               {[
                 { id: 'cash', label: 'Cash', icon: Banknote },
                 { id: 'upi', label: 'UPI / QR', icon: QrCode },
@@ -1124,21 +1130,21 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                   type="button"
                   onClick={() => setPaymentMode(mode.id)}
                   style={{
-                    padding: '0.45rem 0.2rem',
-                    borderRadius: '6px',
+                    padding: '0.3rem 0.15rem',
+                    borderRadius: '5px',
                     border: `1.5px solid ${paymentMode === mode.id ? 'var(--primary)' : 'var(--border)'}`,
                     background: paymentMode === mode.id ? 'var(--primary)' : 'var(--bg-secondary)',
                     color: paymentMode === mode.id ? '#fff' : 'var(--text)',
-                    fontSize: '0.78rem',
+                    fontSize: '0.75rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: '0.2rem'
+                    gap: '0.15rem'
                   }}
                 >
-                  <mode.icon size={15} />
+                  <mode.icon size={13} />
                   <span>{mode.label}</span>
                 </button>
               ))}
@@ -1148,39 +1154,39 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
             {paymentMode === 'cash' && (
               <div style={{
                 background: 'var(--bg-secondary)',
-                borderRadius: '8px',
-                padding: '0.5rem 0.75rem',
+                borderRadius: '6px',
+                padding: '0.35rem 0.55rem',
                 border: '1px solid var(--border)',
-                marginBottom: '0.5rem'
+                marginBottom: '0.35rem'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Cash Received:</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <span style={{ fontWeight: 600 }}>₹</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Cash Received:</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.8rem' }}>₹</span>
                     <input
                       type="number"
                       placeholder={totals.total.toString()}
                       value={tenderedAmount}
                       onChange={e => setTenderedAmount(e.target.value)}
                       style={{
-                        width: '90px',
-                        padding: '0.25rem 0.4rem',
+                        width: '80px',
+                        padding: '0.15rem 0.35rem',
                         borderRadius: '4px',
                         border: '1px solid var(--border)',
                         fontWeight: 700,
                         textAlign: 'right',
-                        fontSize: '0.9rem'
+                        fontSize: '0.85rem'
                       }}
                     />
                   </div>
                 </div>
 
                 {/* Quick denomination chips */}
-                <div style={{ display: 'flex', gap: '0.3rem', marginTop: '0.4rem', overflowX: 'auto' }}>
+                <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem', overflowX: 'auto' }}>
                   <button
                     type="button"
                     onClick={() => setTenderedAmount(totals.total.toString())}
-                    style={{ fontSize: '0.72rem', padding: '0.15rem 0.45rem', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer' }}
+                    style={{ fontSize: '0.68rem', padding: '0.1rem 0.35rem', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer' }}
                   >
                     Exact
                   </button>
@@ -1189,7 +1195,7 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                       key={amt}
                       type="button"
                       onClick={() => setTenderedAmount(amt.toString())}
-                      style={{ fontSize: '0.72rem', padding: '0.15rem 0.45rem', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer' }}
+                      style={{ fontSize: '0.68rem', padding: '0.1rem 0.35rem', borderRadius: '4px', border: '1px solid var(--border)', background: '#fff', cursor: 'pointer' }}
                     >
                       ₹{amt}
                     </button>
@@ -1199,8 +1205,8 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                 {/* Balance Return Alert */}
                 {Number(tenderedAmount) > totals.total && (
                   <div style={{
-                    marginTop: '0.45rem',
-                    padding: '0.35rem 0.5rem',
+                    marginTop: '0.25rem',
+                    padding: '0.2rem 0.4rem',
                     background: '#ecfdf5',
                     borderRadius: '4px',
                     border: '1px solid #a7f3d0',
@@ -1209,10 +1215,10 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     fontWeight: 700,
-                    fontSize: '0.85rem'
+                    fontSize: '0.78rem'
                   }}>
                     <span>Change to Return:</span>
-                    <span style={{ fontSize: '0.95rem' }}>₹{changeDue.toFixed(2)}</span>
+                    <span style={{ fontSize: '0.88rem' }}>₹{changeDue.toFixed(2)}</span>
                   </div>
                 )}
               </div>
@@ -1222,21 +1228,21 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
             {paymentMode === 'upi' && (
               <div style={{
                 background: '#f8fafc',
-                borderRadius: '8px',
-                padding: '0.65rem',
+                borderRadius: '6px',
+                padding: '0.4rem',
                 border: '1px solid #e2e8f0',
                 textAlign: 'center',
-                marginBottom: '0.5rem'
+                marginBottom: '0.35rem'
               }}>
                 {upiQrUrl ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <img src={upiQrUrl} alt="UPI QR Code" style={{ width: '130px', height: '130px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#1e40af', marginTop: '0.3rem' }}>
-                      Scan & Pay ₹{totals.total.toFixed(2)} via GPay / PhonePe / Paytm
+                    <img src={upiQrUrl} alt="UPI QR Code" style={{ width: '90px', height: '90px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                    <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#1e40af', marginTop: '0.2rem' }}>
+                      Scan & Pay ₹{totals.total.toFixed(2)}
                     </div>
                   </div>
                 ) : (
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', padding: '0.5rem' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', padding: '0.35rem' }}>
                     {profile?.upiId ? 'Generating QR...' : 'Set UPI ID in Settings to show QR here'}
                   </div>
                 )}
@@ -1244,7 +1250,7 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
             )}
 
             {/* BOTTOM ACTION BUTTONS */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '0.5rem', marginTop: '0.35rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '0.4rem', marginTop: '0.25rem' }}>
               {/* SAVE & PRINT SLIP (F2) */}
               <button
                 type="button"
@@ -1254,18 +1260,18 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                 style={{
                   background: 'linear-gradient(135deg, #16a34a, #15803d)',
                   borderColor: '#15803d',
-                  padding: '0.7rem 0.5rem',
-                  fontSize: '0.95rem',
+                  padding: '0.55rem 0.4rem',
+                  fontSize: '0.88rem',
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.4rem',
-                  boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)'
+                  gap: '0.35rem',
+                  boxShadow: '0 3px 8px rgba(22, 163, 74, 0.25)'
                 }}
                 title="Save Bill & Print Thermal Receipt [F2]"
               >
-                <Printer size={18} />
+                <Printer size={16} />
                 <span>{isProcessing ? 'Saving...' : 'Print Slip [F2]'}</span>
               </button>
 
@@ -1276,29 +1282,29 @@ export default function PosBilling({ activeProfile, onBack, onOpenSettings }) {
                 onClick={() => handleSaveSale({ printSlip: false })}
                 disabled={cart.length === 0 || isProcessing}
                 style={{
-                  padding: '0.7rem 0.5rem',
-                  fontSize: '0.85rem',
+                  padding: '0.55rem 0.4rem',
+                  fontSize: '0.82rem',
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.35rem'
+                  gap: '0.3rem'
                 }}
                 title="Quick Save & Next [Ctrl+Enter]"
               >
-                <Check size={16} />
+                <Check size={15} />
                 <span>Quick Save</span>
               </button>
             </div>
 
             {/* HOLD BILL BUTTON ROW */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginTop: '0.3rem', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               <span onClick={handleHoldBill} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                <PauseCircle size={13} /> Hold Bill [F4]
+                <PauseCircle size={12} /> Hold Bill [F4]
               </span>
               <span>·</span>
               <span onClick={() => setShowHeldModal(true)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-                <PlayCircle size={13} /> Recall [F8]
+                <PlayCircle size={12} /> Recall [F8]
               </span>
             </div>
           </div>

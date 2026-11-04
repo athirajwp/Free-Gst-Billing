@@ -757,6 +757,13 @@ body {
   flex-direction: column;
 }
 
+.main-content.main-content-pos {
+  padding: 0 !important;
+  overflow: hidden !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+
 /* Sticky bars stop at the scroll area's padding, leaving a strip above them
    that content scrolls through. Pull the Settings bar up by that padding. */
 .settings-bar { top: -2rem; }
