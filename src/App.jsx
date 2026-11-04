@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
-import { Home, FileText, Settings, Plus, Users, Package, BarChart3, Wallet, RefreshCw, Receipt, BookOpen, Moon, Sun, Download, X, ShoppingCart, ChevronDown, Building2, Pencil, HelpCircle, Search, Command, Bell, Calculator, HardDrive, Menu, Heart } from 'lucide-react';
+import { Home, FileText, Settings, Plus, Users, Package, BarChart3, Wallet, RefreshCw, Receipt, BookOpen, Moon, Sun, Download, X, ShoppingCart, ChevronDown, Building2, Pencil, HelpCircle, Search, Command, Bell, Calculator, HardDrive, Menu, Heart, Zap } from 'lucide-react';
 import { getAllProfiles, saveProfile, getEnabledModules, getAllBills, getAllProducts, getStockAlertSettings, getAllClients, runUpdateNow, getLockStatus } from './store';
 import { isModuleEnabled, getUpcomingFilings, countsAsSales, localToday, toLocalIsoDate, DOCS_URL } from './utils';
 // v1.10.4 — Route-level lazy loading. Prior App.jsx synchronously
@@ -34,6 +34,7 @@ const IncomeTax = lazy(() => import('./components/IncomeTax'));
 const PurchaseBills = lazy(() => import('./components/PurchaseBills'));
 const ControlPanel = lazy(() => import('./components/ControlPanel'));
 const SupportView = lazy(() => import('./components/SupportView'));
+const PosBilling = lazy(() => import('./components/PosBilling'));
 import StarBanner from './components/StarBanner';
 import AppFooter from './components/AppFooter';
 import LockButton from './components/LockButton';
@@ -72,7 +73,7 @@ function App() {
       const params = new URLSearchParams(window.location.search);
       const v = params.get('view');
       // v1.10.74 - 'controlpanel' added so ?view=controlpanel deep links work too.
-      const valid = ['dashboard', 'new', 'clients', 'inventory', 'expenses', 'purchases', 'recurring', 'receipts', 'reports', 'filing', 'incometax', 'settings', 'controlpanel', 'support'];
+      const valid = ['dashboard', 'pos', 'new', 'clients', 'inventory', 'expenses', 'purchases', 'recurring', 'receipts', 'reports', 'filing', 'incometax', 'settings', 'controlpanel', 'support'];
       if (v && valid.includes(v)) {
         // Strip the query string so a refresh doesn't keep snapping back to
         // the shortcut target — only the *first* navigation honours it.
@@ -527,6 +528,7 @@ function App() {
 
   const navItems = [
     { id: 'dashboard', icon: Home, label: 'Dashboard', module: 'dashboard' },
+    { id: 'pos', icon: Zap, label: 'POS Billing', module: 'invoicing' },
     { id: 'new', icon: Plus, label: 'New Invoice', onClick: handleNewInvoice, module: 'invoicing' },
     { id: 'clients', icon: Users, label: 'Clients', module: 'clients' },
     { id: 'inventory', icon: Package, label: 'Products', module: 'inventory' },
@@ -548,6 +550,7 @@ function App() {
   // ReferenceError ("Cannot access 'X' before initialization") at runtime.
   const paletteActions = useMemo(() => {
     const acts = [
+      { label: 'POS Fast Billing (Vyapar style)', hint: 'Ctrl+Shift+P', category: 'action', run: () => setCurrentView('pos') },
       { label: 'New Invoice', hint: 'Ctrl+N', category: 'action', run: () => { handleNewInvoice(); } },
     ];
     navItems.forEach(item => {
@@ -648,6 +651,9 @@ function App() {
         // v1.10.80 (#98) - lock now; does nothing when no PIN is set.
         e.preventDefault();
         getLockStatus().then((st) => { if (st?.enabled) lockNow(); }).catch(() => {});
+      } else if ((e.key === 'p' || e.key === 'P') && e.shiftKey && !editable) {
+        e.preventDefault();
+        setCurrentView('pos');
       } else if ((e.key === 'n' || e.key === 'N') && !editable) {
         e.preventDefault();
         handleNewInvoice();
@@ -991,9 +997,14 @@ function App() {
         </div>
       )}
       <div className="main-content">
-        {currentView !== 'new' && <StarBanner />}
+        {currentView !== 'new' && currentView !== 'pos' && <StarBanner />}
         {currentView === 'dashboard' && (
-          <Dashboard onNew={handleNewInvoice} onEdit={handleEditInvoice} onPrint={handlePrintInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} onOpenProducts={() => setCurrentView('inventory')} onOpenSettings={() => setCurrentView('settings')} onOpenGuide={openDocs} onOpenSupport={() => setCurrentView('support')} activeProfile={profile} />
+          <Dashboard onNew={handleNewInvoice} onPos={() => setCurrentView('pos')} onEdit={handleEditInvoice} onPrint={handlePrintInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} onOpenProducts={() => setCurrentView('inventory')} onOpenSettings={() => setCurrentView('settings')} onOpenGuide={openDocs} onOpenSupport={() => setCurrentView('support')} activeProfile={profile} />
+        )}
+        {currentView === 'pos' && (
+          <Suspense fallback={<ViewLoading />}>
+            <PosBilling activeProfile={profile} onBack={() => setCurrentView('dashboard')} onOpenSettings={() => setCurrentView('settings')} />
+          </Suspense>
         )}
         {currentView === 'new' && (
           <InvoiceGenerator

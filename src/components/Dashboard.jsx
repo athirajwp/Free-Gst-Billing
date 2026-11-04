@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { FileText, Trash2, Plus, IndianRupee, Receipt, Edit3, TrendingUp, Search, Copy, X, CheckCircle, Clock, AlertTriangle, MessageCircle, Mail, StickyNote, Send, Package, Download, Printer, Ban, Undo2, Eye } from 'lucide-react';
+import { FileText, Trash2, Plus, IndianRupee, Receipt, Edit3, TrendingUp, Search, Copy, X, CheckCircle, Clock, AlertTriangle, MessageCircle, Mail, StickyNote, Send, Package, Download, Printer, Ban, Undo2, Eye, Zap } from 'lucide-react';
 import HelpButton from './HelpButton';
 import { getAllBills, saveBill, getAllProducts, applyStockChanges, getProfile, getAllClients, getStockAlertSettings, saveReceipt, deleteReceipt, getAllReceipts, markSavedPdfCancelled } from '../store';
 import { formatCurrency, INVOICE_TYPES, getFYOptions, numberToWords, belongsToProfile, salesSign, isCancelledBill, markPaidPatch, markUnpaidPatch, stockEffect, appliedStock, stockDelta, SALES_INVOICE_TYPES, localToday, amountDue, paymentStatusFor } from '../utils';
@@ -202,7 +202,7 @@ function ReceiptModal({ target, onClose }) {
   );
 }
 
-export default function Dashboard({ onNew, onEdit, onPrint, onDuplicate, onConvert, onOpenProducts, onOpenSettings, onOpenGuide, onOpenSupport, activeProfile }) {
+export default function Dashboard({ onNew, onPos, onEdit, onPrint, onDuplicate, onConvert, onOpenProducts, onOpenSettings, onOpenGuide, onOpenSupport, activeProfile }) {
   // v1.10.64 — requested (#55, @sangwanmail-eng): "An invoice belonging to one
   // company should not appear under the other."
   //
@@ -1246,6 +1246,16 @@ export default function Dashboard({ onNew, onEdit, onPrint, onDuplicate, onConve
         </HelpButton>
         <LockButton />
         <BulkCsvImport kind="sales" onDone={loadBills} />
+        {onPos && (
+          <button
+            className="btn btn-secondary"
+            onClick={onPos}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: 600, color: 'var(--primary)' }}
+            title="Fast POS Counter Billing (Vyapar style)"
+          >
+            <Zap size={18} /> POS Billing
+          </button>
+        )}
         <button className="btn btn-primary" onClick={onNew}><Plus size={18} /> New Invoice</button>
       </PageHeader>
 
